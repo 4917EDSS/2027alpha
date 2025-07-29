@@ -1,0 +1,33 @@
+This is how to set up the robot if you are a subteam or someone who wants to know how to set it up
+
+1. get a mentor who knows what they are doing
+
+
+# START #
+First, go to github and pull the origin (aka, click the blue button until it stops showing up)
+You should be past this step
+
+Next if your already in vscode and reading this good job!
+otherwise open 2025 wpilib vscode
+
+# turning the robot on #
+if the robot is not on look for the optifuse waterproof (it should be on the edge)
+push the switch into the cover
+to turn it off press the button on top of the optifuse
+lights and sounds should be happening
+check if there is a usb plugged into the robot otherwise it will yell at you for not having enough storage
+
+# Actually doing stuff with the robot #
+Grab a controller, it should be in or on top of the cart
+set the wifi to the 4917 robot or 4917_practice (whichever one you're using)
+open up the frc driver station
+get the deploy sword
+press the 3 dots in the top right of vscode
+hit deploy
+after the build is done then press enable
+get ready to press enter or space if something goes wrong
+
+# Driving the robot #
+left joystick moves it
+right joystick turns it
+dont press anything else unless you know what it does

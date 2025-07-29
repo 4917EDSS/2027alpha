@@ -1,0 +1,155 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Set Right"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Push"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "SetL4ScoringSlow"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoCoralScoreL4Grp"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Set Left"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "1st Score - Pickup"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutoGrabCoralAutoGrp"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Pickup - 2nd Auto"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoCoralScoreL4Grp"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "2nd Score - Pickup"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutoGrabCoralAutoGrp"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Set Right"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Pickup - 3rd Auto"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoCoralScoreL4Grp"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "3rd Score - Pickup"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutoGrabCoralAutoGrp"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Set Left"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "4th auto pickup"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoCoralScoreL4Grp"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
