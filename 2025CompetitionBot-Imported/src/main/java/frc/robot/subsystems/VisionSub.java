@@ -176,7 +176,7 @@ public class VisionSub extends SubsystemBase {
       m_previousTimestamp = timestamp;
       double standardDeviation = 0.7; // 0.7 is a good starting value according to limelight docs.
 
-      if(Math.abs(swerveDriveState.Speeds.omegaRadiansPerSecond) > Math.PI) // if our angular velocity is greater than
+      if(Math.abs(swerveDriveState.Speeds.omega) > Math.PI) // if our angular velocity is greater than
                                                                             // 360 degrees per second, ignore vision
                                                                             // updates
       {

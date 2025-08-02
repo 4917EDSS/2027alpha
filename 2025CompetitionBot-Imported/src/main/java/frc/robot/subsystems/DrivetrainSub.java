@@ -234,9 +234,9 @@ public class DrivetrainSub extends TunerSwerveDrivetrain implements Subsystem {
   public void periodic() {
 
     ChassisSpeeds robotSpeeds = getRobotRelativeSpeeds();
-    SmartDashboard.putNumber("Chassis vx", robotSpeeds.vxMetersPerSecond);
-    SmartDashboard.putNumber("Chassis vy", robotSpeeds.vyMetersPerSecond);
-    SmartDashboard.putNumber("Chassis rotation velocity", robotSpeeds.omegaRadiansPerSecond);
+    SmartDashboard.putNumber("Chassis vx", robotSpeeds.vx);
+    SmartDashboard.putNumber("Chassis vy", robotSpeeds.vy);
+    SmartDashboard.putNumber("Chassis rotation velocity", robotSpeeds.omega);
     /*
      * Periodically try to apply the operator perspective.
      * If we haven't applied the operator perspective before, then we should apply
@@ -262,7 +262,7 @@ public class DrivetrainSub extends TunerSwerveDrivetrain implements Subsystem {
     SmartDashboard.putNumber("Dr X Pos", getState().Pose.getX());
     SmartDashboard.putNumber("Dr Y Pos", getState().Pose.getY());
     SmartDashboard.putNumber("Dr Speed",
-        Math.sqrt(Math.pow(getState().Speeds.vxMetersPerSecond, 2) + Math.pow(getState().Speeds.vyMetersPerSecond, 2)));
+        Math.sqrt(Math.pow(getState().Speeds.vx, 2) + Math.pow(getState().Speeds.vy, 2)));
     SmartDashboard.putNumber("Dr Heading", getState().Pose.getRotation().getDegrees());
     SmartDashboard.putBoolean("Left?", RobotStatus.isLeft());
     SmartDashboard.putBoolean("Right?", !RobotStatus.isLeft());
