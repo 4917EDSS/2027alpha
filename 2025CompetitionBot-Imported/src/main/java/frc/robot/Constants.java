@@ -29,6 +29,11 @@ public final class Constants {
     public static final int kOperatorControllerPort = 1;
   }
 
+  public static class CanBuses {
+    public static final int kMainBus = 0;
+    public static final String kMainBusStr = "can_s0";
+  }
+
   public static class CanIds {
     // These are the roboRIO CAN bus IDs
     // CTRE Swerve drivetrain uses CAN IDs 1-13 on CANivore bus

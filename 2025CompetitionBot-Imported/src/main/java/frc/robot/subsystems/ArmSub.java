@@ -25,7 +25,7 @@ import frc.robot.utils.TestableSubsystem;
 public class ArmSub extends TestableSubsystem {
   private static Logger m_logger = Logger.getLogger(ArmSub.class.getName());
 
-  private final SparkMax m_armMotor = new SparkMax(Constants.CanIds.kArmMotor, MotorType.kBrushless);
+  private final SparkMax m_armMotor = new SparkMax(Constants.CanBuses.kMainBus, Constants.CanIds.kArmMotor, MotorType.kBrushless);
   private final SparkAbsoluteEncoder m_absoluteEncoder = m_armMotor.getAbsoluteEncoder();
   private final SparkLimitSwitch m_forwardLimitSwitch = m_armMotor.getForwardLimitSwitch();
   private final SparkLimitSwitch m_reverseLimitSwitch = m_armMotor.getReverseLimitSwitch();

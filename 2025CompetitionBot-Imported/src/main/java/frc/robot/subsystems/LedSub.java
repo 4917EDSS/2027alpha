@@ -8,6 +8,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import edu.wpi.first.hal.can.CANJNI;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 
 public class LedSub extends SubsystemBase {
@@ -132,7 +133,6 @@ public class LedSub extends SubsystemBase {
     targetedMessageID.asIntBuffer().put(0, canId); //Put the arbID into the buffer
     //Send a message back to the same device
     // Note that NO REPEAT means it will only send the output once. 
-    CANJNI.FRCNetCommCANSessionMuxSendMessage(targetedMessageID.getInt(), output_data,
-        CANJNI.CAN_SEND_PERIOD_NO_REPEAT);
+    CANJNI.sendMessage(Constants.CanBuses.kMainBus, targetedMessageID.getInt(), output_data, 8, 0, CANJNI.CAN_SEND_PERIOD_NO_REPEAT);
   }
 }

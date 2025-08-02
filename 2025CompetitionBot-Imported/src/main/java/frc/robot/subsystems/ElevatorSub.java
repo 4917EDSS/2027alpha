@@ -32,9 +32,9 @@ import frc.robot.utils.TestableSubsystem;
 public class ElevatorSub extends TestableSubsystem {
   private static Logger m_logger = Logger.getLogger(ElevatorSub.class.getName());
 
-  private final TalonFX m_elevatorMotor = new TalonFX(Constants.CanIds.kElevatorMotor);
-  private final TalonFX m_elevatorMotor2 = new TalonFX(Constants.CanIds.kElevatorMotor2);
-  private final SparkMax m_intakeMotor = new SparkMax(Constants.CanIds.kIntakeMotor, MotorType.kBrushless);
+  private final TalonFX m_elevatorMotor = new TalonFX(Constants.CanIds.kElevatorMotor, Constants.CanBuses.kMainBusStr);
+  private final TalonFX m_elevatorMotor2 = new TalonFX(Constants.CanIds.kElevatorMotor2, Constants.CanBuses.kMainBusStr);
+  private final SparkMax m_intakeMotor = new SparkMax(Constants.CanBuses.kMainBus, Constants.CanIds.kIntakeMotor, MotorType.kBrushless);
   private final DigitalInput m_elevatorUpperLimit = new DigitalInput(Constants.DioIds.kElevatorUpperLimit);
   private final DigitalInput m_encoderResetSwitch = new DigitalInput(Constants.DioIds.kElevatorEncoderResetSwitch);
 

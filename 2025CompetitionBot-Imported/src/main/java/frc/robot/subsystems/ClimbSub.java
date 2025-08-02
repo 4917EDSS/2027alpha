@@ -21,7 +21,7 @@ public class ClimbSub extends TestableSubsystem {
 
   private final LedSub m_ledSub;
 
-  private final TalonFX m_climbMotor = new TalonFX(Constants.CanIds.kClimbMotor);
+  private final TalonFX m_climbMotor = new TalonFX(Constants.CanIds.kClimbMotor, Constants.CanBuses.kMainBusStr);
   private final DigitalInput m_climbInLimit = new DigitalInput(Constants.DioIds.kClimbInLimitSwitch);
   private final DigitalInput m_climbOutLimit = new DigitalInput(Constants.DioIds.kClimbOutLimitSwitch);
   private final DigitalInput m_climbLatchTopLimit = new DigitalInput(Constants.DioIds.kClimbLatchTopSwitch);

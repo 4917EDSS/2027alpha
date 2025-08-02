@@ -7,9 +7,6 @@ package frc.robot.utils;
 import java.util.ArrayList;
 import java.util.Map;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.Constants;
 import frc.robot.commands.tests.RunTestsGrp;
 
@@ -63,7 +60,7 @@ public class TestManager {
   }
 
   // Member variables
-  private final ShuffleboardTab m_boardTab;
+  // private final ShuffleboardTab m_boardTab;
   private GenericEntry m_overallStatusDisplay;
   private ArrayList<TestStatus> m_testStatuses;
   private int m_nextTestStatusIdx = 0;
@@ -77,7 +74,7 @@ public class TestManager {
    */
   public TestManager() {
     // Grab the Tests tab on the Shuffleboard. It should already have been created.
-    m_boardTab = Shuffleboard.getTab(Constants.Tests.kTabName);
+    //m_boardTab = Shuffleboard.getTab(Constants.Tests.kTabName);
 
     // Setup the location where test widgets can be added (below the overall
     // indicators that are
@@ -95,15 +92,15 @@ public class TestManager {
    */
   public void setTestCommand(RunTestsGrp testsCommand) {
     // Add the overall-tests-result indicator and the button to start the tests
-    m_overallStatusDisplay = m_boardTab.add("Overall Status", Result.kFail.getValue())
-        .withWidget(BuiltInWidgets.kNumberBar)
-        .withProperties(Map.of("min", -1, "max", 1, "center", -1, "show text", false, "num tick marks", 2))
-        .withSize(1, 1)
-        .withPosition(0, 0)
-        .getEntry();
-    m_boardTab.add(testsCommand)
-        .withSize(1, 1)
-        .withPosition(1, 0);
+    // m_overallStatusDisplay = m_boardTab.add("Overall Status", Result.kFail.getValue())
+    //     .withWidget(BuiltInWidgets.kNumberBar)
+    //     .withProperties(Map.of("min", -1, "max", 1, "center", -1, "show text", false, "num tick marks", 2))
+    //     .withSize(1, 1)
+    //     .withPosition(0, 0)
+    //     .getEntry();
+    // m_boardTab.add(testsCommand)
+    //     .withSize(1, 1)
+    //     .withPosition(1, 0);
   }
 
   /**
@@ -122,17 +119,17 @@ public class TestManager {
 
     TestStatus newTest = m_testStatuses.get(m_nextTestStatusIdx);
     newTest.m_result = Result.kFail;
-    newTest.m_resultDisplay = m_boardTab.add(name + " Result", newTest.m_result.getValue())
-        .withWidget(BuiltInWidgets.kNumberBar)
-        .withProperties(Map.of("min", -1, "max", 1, "center", -1, "show text", false, "num tick marks", 2))
-        .withSize(1, 1)
-        .withPosition(testLocation.m_y, testLocation.m_x)
-        .getEntry();
-    newTest.m_text = "Not run";
-    newTest.m_textDisplay = m_boardTab.add(name + " Status", newTest.m_text)
-        .withSize(1, 1)
-        .withPosition(testLocation.m_y + 1, testLocation.m_x)
-        .getEntry();
+    // newTest.m_resultDisplay = m_boardTab.add(name + " Result", newTest.m_result.getValue())
+    //     .withWidget(BuiltInWidgets.kNumberBar)
+    //     .withProperties(Map.of("min", -1, "max", 1, "center", -1, "show text", false, "num tick marks", 2))
+    //     .withSize(1, 1)
+    //     .withPosition(testLocation.m_y, testLocation.m_x)
+    //     .getEntry();
+    // newTest.m_text = "Not run";
+    // newTest.m_textDisplay = m_boardTab.add(name + " Status", newTest.m_text)
+    //     .withSize(1, 1)
+    //     .withPosition(testLocation.m_y + 1, testLocation.m_x)
+    //     .getEntry();
 
     // Return the array index (i.e. the ID) of the test and then increment it for
     // the next one
