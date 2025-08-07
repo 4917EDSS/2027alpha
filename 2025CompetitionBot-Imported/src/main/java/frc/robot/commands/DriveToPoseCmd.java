@@ -101,11 +101,11 @@ public class DriveToPoseCmd extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    double speed = Math.sqrt(((Math.pow(m_drivetrainSub.getRobotRelativeSpeeds().vxMetersPerSecond, 2))
-        + (Math.pow(m_drivetrainSub.getRobotRelativeSpeeds().vyMetersPerSecond, 2))));
+    double speed = Math.sqrt(((Math.pow(m_drivetrainSub.getRobotRelativeSpeeds().vx, 2))
+        + (Math.pow(m_drivetrainSub.getRobotRelativeSpeeds().vy, 2))));
     if(m_error.getTranslation().getNorm() < m_disTolerance
         && Math.abs(m_error.getRotation().getDegrees()) < m_angTolerance
-        && Math.abs(m_drivetrainSub.getRobotRelativeSpeeds().omegaRadiansPerSecond) < m_angSpeedTolerance
+        && Math.abs(m_drivetrainSub.getRobotRelativeSpeeds().omega) < m_angSpeedTolerance
         && speed < m_speedTolerance) {
       return true;
     }

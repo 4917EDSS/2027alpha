@@ -133,7 +133,7 @@ public class AutoDriveCmd extends Command {
 
     ChassisSpeeds robotSpeeds = m_drivetrainSub.getRobotRelativeSpeeds();
 
-    if(!isInRotZone(true) && (Math.abs(robotSpeeds.omegaRadiansPerSecond) < 0.035)) {
+    if(!isInRotZone(true) && (Math.abs(robotSpeeds.omega) < 0.035)) {
       rotFeedforward += 0.03 * Math.signum(m_apriltagPos.getRotation().getDegrees());
     }
 

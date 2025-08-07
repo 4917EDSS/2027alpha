@@ -4,15 +4,18 @@
 
 package frc.robot.subsystems;
 
+import java.lang.constant.Constable;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import edu.wpi.first.hal.can.CANJNI;
+import edu.wpi.first.hal.can.CANReceiveMessage;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 
 public class CanSub extends SubsystemBase {
-  byte m_data_buffer[];
+  CANReceiveMessage m_canMsgIn;
   /*
    * DigitalOutput m_do0;
    * DigitalOutput m_do1;
@@ -28,7 +31,7 @@ public class CanSub extends SubsystemBase {
   /** Creates a new CanSub. */
   public CanSub(int CustomSensorID, LedSub ledSub) {
     m_ledSub = ledSub;
-    m_data_buffer = new byte[8];
+    m_canMsgIn = new CANReceiveMessage();
     /*
      * m_do0 = new DigitalOutput(0);
      * m_do1 = new DigitalOutput(1);
@@ -52,7 +55,7 @@ public class CanSub extends SubsystemBase {
 
 
   public byte getDataBufferByte(int byteIndex) {
-    return m_data_buffer[byteIndex];
+    return m_canMsgIn.data[byteIndex];
   }
 
   // A helper function to assemble a full arbitration ID.
@@ -82,21 +85,23 @@ public class CanSub extends SubsystemBase {
       // ByteBuffer timeStamp - The timestamp of when the message was received. Unsure if this is the
       //                        OS clock or a hardware clock linked to the CAN Bus processing.
 
-      System.arraycopy(
-          CANJNI.FRCNetCommCANSessionMuxReceiveMessage(targetedMessageID.asIntBuffer(), 0xFFFFFFC0, timeStamp), 0,
-          m_data_buffer, 0, m_data_buffer.length);
+      // System.arraycopy(
+      //     CANJNI.FRCNetCommCANSessionMuxReceiveMessage(targetedMessageID.asIntBuffer(), 0xFFFFFFC0, timeStamp), 0,
+      //     m_data_buffer, 0, m_data_buffer.length);
+
+      CANJNI.receiveMessage(Constants.CanBuses.kMainBus, m_ARBID, m_canMsgIn);
 
       //m_do0.set(!m_do0.get());
 
-      if((m_data_buffer != null) && (timeStamp != null)) {
-        if(m_data_buffer.length >= 2) {
+      if((m_canMsgIn.length > 0) && (timeStamp != null)) {
+        if(m_canMsgIn.length >= 2) {
 
-          int msb = m_data_buffer[0];
+          int msb = m_canMsgIn.data[0];
           if(msb < 0) {
             msb = msb + 256;
           }
 
-          int lsb = m_data_buffer[1];
+          int lsb = m_canMsgIn.data[1];
           if(lsb < 0) {
             lsb = lsb + 256;
           }
@@ -104,14 +109,14 @@ public class CanSub extends SubsystemBase {
           m_TOFDist = (msb << 8) + lsb;
 
 
-          if(m_data_buffer.length >= 6) {
+          if(m_canMsgIn.length >= 6) {
 
-            int msb1 = m_data_buffer[4];
+            int msb1 = m_canMsgIn.data[4];
             if(msb1 < 0) {
               msb1 = msb1 + 256;
             }
 
-            int lsb1 = m_data_buffer[5];
+            int lsb1 = m_canMsgIn.data[5];
             if(lsb1 < 0) {
               lsb1 = lsb1 + 256;
             }
@@ -119,14 +124,14 @@ public class CanSub extends SubsystemBase {
             m_upperCoralSensor = (msb1 << 8) + lsb1;
           }
 
-          if(m_data_buffer.length >= 4) {
+          if(m_canMsgIn.length >= 4) {
 
-            int msb2 = m_data_buffer[2];
+            int msb2 = m_canMsgIn.data[2];
             if(msb2 < 0) {
               msb2 = msb2 + 256;
             }
 
-            int lsb2 = m_data_buffer[3];
+            int lsb2 = m_canMsgIn.data[3];
             if(lsb2 < 0) {
               lsb2 = lsb2 + 256;
             }
@@ -151,9 +156,9 @@ public class CanSub extends SubsystemBase {
 
       }
 
-    } catch (edu.wpi.first.hal.can.CANMessageNotFoundException e) {
-      return;
-      //No CAN message, not a bad thing due to periodicity of messages
+    // } catch (edu.wpi.first.hal.can.CANMessageNotFoundException e) {
+    //   return;
+    //   //No CAN message, not a bad thing due to periodicity of messages
     } catch (Exception e) {
       //Other exception, print it out to make sure user sees it
       System.out.println(e.toString());
