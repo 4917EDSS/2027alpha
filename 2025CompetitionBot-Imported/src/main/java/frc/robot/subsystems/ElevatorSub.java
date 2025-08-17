@@ -302,7 +302,7 @@ public class ElevatorSub extends TestableSubsystem {
    * @return true when it's at the limit, false otherwise
    */
   public boolean isAtUpperLimit() {
-    return !m_elevatorUpperLimit.get();
+    return m_elevatorUpperLimit.get();
   }
 
   /**
@@ -311,7 +311,7 @@ public class ElevatorSub extends TestableSubsystem {
    * @return true when it's at the switch, false otherwise
    */
   public boolean encoderResetSwitchHit() {
-    return !m_encoderResetSwitch.get();
+    return m_encoderResetSwitch.get();
   }
 
   /**

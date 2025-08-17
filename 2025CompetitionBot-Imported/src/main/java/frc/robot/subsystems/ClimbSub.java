@@ -87,19 +87,19 @@ public class ClimbSub extends TestableSubsystem {
   }
 
   public boolean isAtInLimit() {
-    return !m_climbInLimit.get();
+    return m_climbInLimit.get();
   }
 
   public boolean isAtOutLimit() {
-    return !m_climbOutLimit.get();
+    return m_climbOutLimit.get();
   }
 
   public boolean isTopLatched() {
-    return !m_climbLatchTopLimit.get();
+    return m_climbLatchTopLimit.get();
   }
 
   public boolean isBottomLatched() {
-    return !m_climbLatchBottomLimit.get();
+    return m_climbLatchBottomLimit.get();
   }
 
 
