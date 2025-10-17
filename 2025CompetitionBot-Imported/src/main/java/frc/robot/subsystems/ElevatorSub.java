@@ -8,9 +8,12 @@ import java.util.function.Supplier;
 import java.util.logging.Logger;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -38,6 +41,9 @@ public class ElevatorSub extends TestableSubsystem {
   private final DigitalInput m_elevatorUpperLimit = new DigitalInput(Constants.DioIds.kElevatorUpperLimit);
   private final DigitalInput m_encoderResetSwitch = new DigitalInput(Constants.DioIds.kElevatorEncoderResetSwitch);
 
+  // create a Motion Magic request, voltage output
+  private final DynamicMotionMagicVoltage m_request = new DynamicMotionMagicVoltage(0, 80, 400, 4000);
+
   private double m_kS = 0.005;//0.01
   private double m_kG = 0.02;//0.05
   private double m_kV = 0.0;
@@ -60,8 +66,23 @@ public class ElevatorSub extends TestableSubsystem {
 
   /** Creates a new ElevatorSub. */
   public ElevatorSub() {
+    
     TalonFXConfigurator talonFxConfiguarator = m_elevatorMotor.getConfigurator();
     TalonFXConfigurator talonFxConfiguarator2 = m_elevatorMotor2.getConfigurator();
+
+    var talonFXConfigs = new TalonFXConfiguration();
+    var slot0Configs = talonFXConfigs.Slot0;
+    
+
+    slot0Configs.kS = 0.25; // Add 0.25 V output to overcome static friction
+    slot0Configs.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
+    slot0Configs.kA = 0.01; // An acceleration of 1 rps/s requires 0.01 V output
+    slot0Configs.kP = 4.8; // A position error of 2.5 rotations results in 12 V output
+    slot0Configs.kI = 0; // no output for integrated error
+    slot0Configs.kD = 0.1; // A velocity error of 1 rps results in 0.1 V output
+
+    talonFxConfiguarator.apply(talonFXConfigs);
+    talonFxConfiguarator2.apply(talonFXConfigs);
 
     // This is how you set a current limit inside the motor (vs on the input power
     // supply)
@@ -210,7 +231,7 @@ public class ElevatorSub extends TestableSubsystem {
     } else if(powerValue < -0.5) {
       powerValue = -0.5;
     }
-    m_elevatorMotor.set(powerValue);
+    m_elevatorMotor.setControl(m_request.withVelocity(powerValue));
     SmartDashboard.putNumber("El Power", powerValue);
   }
 
@@ -411,32 +432,30 @@ public class ElevatorSub extends TestableSubsystem {
       activeTarget = m_blockedPosition;
     }
 
-    double ffPower = m_feedforward.calculate(getVelocity());
-    //CONSTAN FORCE SPRING COMING IN
-    if(getPositionMm() >= 1100) {
-      ffPower += 0.03;
-    }
-    double pidPower = (m_elevatorPID.calculate(getPositionMm(), activeTarget));
-    double negitivepidPower = (m_negitiveelevatorPID.calculate(getPositionMm(), activeTarget));
-    double totalPower = ffPower;
+    // double powerValue = activeTarget;
+    // if(isAtLowerLimit() && activeTarget < 0.0) {
+    //   powerValue = 0.0;
+    // } else if(isAtUpperLimit() && activeTarget > 0.02) {
+    //   powerValue = 0.02;
+    // } else if((getPositionMm() < Constants.Elevator.kSlowDownLowerStageHeight)
+    //     && (activeTarget < Constants.Elevator.kSlowDownLowerStagePower)) {
+    //   powerValue = Constants.Elevator.kSlowDownLowerStagePower;
+    // } else if((getPositionMm() > Constants.Elevator.kSlowDownUpperStageHeight)
+    //     && (activeTarget > Constants.Elevator.kSlowDownUpperStagePower)) {
+    //   powerValue = Constants.Elevator.kSlowDownUpperStagePower;
+    // } else if((getPositionMm() >= Constants.Elevator.kMaxHeight) && (activeTarget > 0.0)) {
+    //   powerValue = 0;
+    // }
 
-    if(activeTarget > getPositionMm()) {
-      totalPower += pidPower;
-    } else {
-      totalPower += negitivepidPower;
-    }
+    // if(powerValue > 0.85) {
+    //   powerValue = 0.85;
+    // } else if(powerValue < -0.5) {
+    //   powerValue = -0.5;
+    // }
 
-    if(updatePower) {
-      if(m_isSlow) {
-        if(totalPower > 0.2) {
-          totalPower = 0.2;
-        } else if(totalPower < -0.2) {
-          totalPower = -0.2;
-        }
-      }
-      setPower(totalPower);
+    m_elevatorMotor.setControl(m_request.withPosition(activeTarget));
+      setPower(activeTarget);
     }
-  }
 
   /**
    * Returns if the elevator has reached it's target height or not
