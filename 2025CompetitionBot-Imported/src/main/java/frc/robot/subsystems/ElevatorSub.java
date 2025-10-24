@@ -36,8 +36,10 @@ public class ElevatorSub extends TestableSubsystem {
   private static Logger m_logger = Logger.getLogger(ElevatorSub.class.getName());
 
   private final TalonFX m_elevatorMotor = new TalonFX(Constants.CanIds.kElevatorMotor, Constants.CanBuses.kMainBusStr);
-  private final TalonFX m_elevatorMotor2 = new TalonFX(Constants.CanIds.kElevatorMotor2, Constants.CanBuses.kMainBusStr);
-  private final SparkMax m_intakeMotor = new SparkMax(Constants.CanBuses.kMainBus, Constants.CanIds.kIntakeMotor, MotorType.kBrushless);
+  private final TalonFX m_elevatorMotor2 =
+      new TalonFX(Constants.CanIds.kElevatorMotor2, Constants.CanBuses.kMainBusStr);
+  private final SparkMax m_intakeMotor =
+      new SparkMax(Constants.CanBuses.kMainBus, Constants.CanIds.kIntakeMotor, MotorType.kBrushless);
   private final DigitalInput m_elevatorUpperLimit = new DigitalInput(Constants.DioIds.kElevatorUpperLimit);
   private final DigitalInput m_encoderResetSwitch = new DigitalInput(Constants.DioIds.kElevatorEncoderResetSwitch);
 
@@ -66,20 +68,20 @@ public class ElevatorSub extends TestableSubsystem {
 
   /** Creates a new ElevatorSub. */
   public ElevatorSub() {
-    
+
     TalonFXConfigurator talonFxConfiguarator = m_elevatorMotor.getConfigurator();
     TalonFXConfigurator talonFxConfiguarator2 = m_elevatorMotor2.getConfigurator();
 
     var talonFXConfigs = new TalonFXConfiguration();
     var slot0Configs = talonFXConfigs.Slot0;
-    
 
-    slot0Configs.kS = 0.25; // Add 0.25 V output to overcome static friction
+
+    slot0Configs.kS = 0.005; // Add 0.25 V output to overcome static friction
     slot0Configs.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
     slot0Configs.kA = 0.01; // An acceleration of 1 rps/s requires 0.01 V output
-    slot0Configs.kP = 4.8; // A position error of 2.5 rotations results in 12 V output
-    slot0Configs.kI = 0; // no output for integrated error
-    slot0Configs.kD = 0.1; // A velocity error of 1 rps results in 0.1 V output
+    slot0Configs.kP = 0.01; // A position error of 2.5 rotations results in 12 V output
+    slot0Configs.kI = 0.0; // no output for integrated error
+    slot0Configs.kD = 0.0; // A velocity error of 1 rps results in 0.1 V output
 
     talonFxConfiguarator.apply(talonFXConfigs);
     talonFxConfiguarator2.apply(talonFXConfigs);
@@ -174,6 +176,7 @@ public class ElevatorSub extends TestableSubsystem {
     SmartDashboard.putNumber("El Current 2", testGetMotorAmps(2));
     SmartDashboard.putBoolean("Is at Elivator limit", isAtTargetHeight());
     SmartDashboard.putNumber("Elevator Target", m_targetHeight);
+    SmartDashboard.putNumber("El Voltage", getElevatorVoltage(0));
     // Current power value is sent in setPower()
 
     boolean tuning = false;
@@ -454,8 +457,8 @@ public class ElevatorSub extends TestableSubsystem {
     // }
 
     m_elevatorMotor.setControl(m_request.withPosition(activeTarget));
-      setPower(activeTarget);
-    }
+    setPower(activeTarget);
+  }
 
   /**
    * Returns if the elevator has reached it's target height or not
@@ -627,5 +630,25 @@ public class ElevatorSub extends TestableSubsystem {
         break;
     }
     return current;
+  }
+
+  public double getElevatorVoltage(int motorId) {
+    double voltage = 0.0;
+
+    switch(motorId) {
+      case 1:
+        voltage = m_elevatorMotor.getMotorVoltage().getValueAsDouble();
+        break;
+      case 2:
+        voltage = m_elevatorMotor2.getMotorVoltage().getValueAsDouble();
+        break;
+      default:
+        // Return an invalid value
+        voltage = -1.0;
+        break;
+    }
+    return voltage;
+
+
   }
 }
