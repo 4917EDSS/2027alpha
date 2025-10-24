@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
@@ -45,8 +44,6 @@ import frc.robot.commands.GrabCoralTeleopGrp;
 import frc.robot.commands.KillAllCmd;
 import frc.robot.commands.MoveElArmGrp;
 import frc.robot.commands.MoveElArmPostManualCmd;
-import frc.robot.commands.PathGenCmd;
-import frc.robot.commands.PathFollowCmd;
 import frc.robot.commands.SetArmToPositionCmd;
 import frc.robot.commands.SetElevatorToHeightCmd;
 import frc.robot.commands.WaitForUpperCoralCmd;
@@ -123,8 +120,6 @@ public class RobotContainer {
         ));
     m_armSub.setDefaultCommand(new ArmMoveWithJoystickCmd(m_operatorController, m_armSub));
     m_elevatorSub.setDefaultCommand(new ElevatorMoveWithJoystickCmd(m_operatorController, m_elevatorSub));
-
-    CommandScheduler.getInstance().schedule(new PathGenCmd());
 
     // Register Swerve telemetry
     //m_drivetrainSub.registerTelemetry(swerveLogger::telemeterize);
@@ -267,7 +262,6 @@ public class RobotContainer {
     m_driverController.PS().onTrue(m_drivetrainSub.runOnce(() -> m_drivetrainSub.seedFieldCentric())); // Reset the field-centric heading
 
     // L3
-    m_driverController.L3().onTrue(new PathFollowCmd(m_drivetrainSub, new int[] {50, 100}));
 
     // R3
 
