@@ -5,7 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.ArmSub;
 
 /*
@@ -15,11 +15,11 @@ import frc.robot.subsystems.ArmSub;
 public class ArmMoveWithJoystickCmd extends Command {
 
   private final ArmSub m_armSub;
-  private final CommandPS4Controller m_controller;
+  private final CommandXboxController m_controller;
   private boolean m_wasInDeadZone = true;
 
   /** Creates a new MoveArmWithJoystickCmd. */
-  public ArmMoveWithJoystickCmd(CommandPS4Controller controller, ArmSub armSub) {
+  public ArmMoveWithJoystickCmd(CommandXboxController controller, ArmSub armSub) {
     m_controller = controller;
     m_armSub = armSub;
     // Use addRequirements() here to declare subsystem dependencies.

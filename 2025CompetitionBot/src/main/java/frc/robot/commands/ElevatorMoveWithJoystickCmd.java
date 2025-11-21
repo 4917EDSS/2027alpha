@@ -5,7 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.ElevatorSub;
 
 /*
@@ -13,12 +13,12 @@ import frc.robot.subsystems.ElevatorSub;
  * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
  */
 public class ElevatorMoveWithJoystickCmd extends Command {
-  private final CommandPS4Controller m_controller;
+  private final CommandXboxController m_controller;
   private final ElevatorSub m_elevatorSub;
   private boolean m_wasInDeadZone = true;
 
   /** Creates a new ElevatorWithJoystickCmd. */
-  public ElevatorMoveWithJoystickCmd(CommandPS4Controller controller, ElevatorSub elevatorSub) {
+  public ElevatorMoveWithJoystickCmd(CommandXboxController controller, ElevatorSub elevatorSub) {
     m_controller = controller;
     m_elevatorSub = elevatorSub;
 

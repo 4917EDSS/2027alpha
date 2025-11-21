@@ -19,13 +19,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
+import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.AlgaeRemovalL2L3Grp;
-import frc.robot.commands.AlgaeRemovalL3L4Grp;
 import frc.robot.commands.ArmMoveWithJoystickCmd;
 import frc.robot.commands.AutoDriveCmd;
-import frc.robot.commands.BackUpToPickUpcmd;
+// import frc.robot.commands.BackUpToPickUpcmd;
 import frc.robot.commands.ClimbDeployCmd;
 import frc.robot.commands.ClimbRetractCmd;
 import frc.robot.commands.CoralScoreL2Grp;
@@ -85,10 +84,11 @@ public class RobotContainer {
   private final RobotStatus m_robotStatus = new RobotStatus();
 
   // Controllers
-  private final CommandPS4Controller m_driverController =
-      new CommandPS4Controller(OperatorConstants.kDriverControllerPort);
-  private final CommandPS4Controller m_operatorController =
-      new CommandPS4Controller(OperatorConstants.kOperatorControllerPort);
+  private final CommandXboxController m_driverController =
+      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  private final CommandXboxController m_operatorController =
+      new CommandXboxController(OperatorConstants.kOperatorControllerPort);
+  private final CommandGenericHID m_keyboard = new CommandGenericHID(16);
 
   // RobotContainer member variables
   public static boolean disableShuffleboardPrint = false;
@@ -181,50 +181,50 @@ public class RobotContainer {
   private void configureBindings() {
     // Drive controller bindings ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Square
+    // X
 
-    m_driverController.square().onTrue(new GrabCoralTeleopGrp(m_armSub, m_canSub, m_elevatorSub));//.onTrue(new AutoGrabCoralGrp(m_armSub, m_canSub, m_elevatorSub));//
+    m_driverController.x().onTrue(new GrabCoralTeleopGrp(m_armSub, m_canSub, m_elevatorSub));//.onTrue(new AutoGrabCoralGrp(m_armSub, m_canSub, m_elevatorSub));//
 
 
-    // Cross
-    m_driverController.cross()
+    // A
+    m_driverController.a()
         .onTrue(new ParallelCommandGroup(
             new CoralScoreL2Grp(m_armSub, m_canSub, m_drivetrainSub, m_elevatorSub, m_visionSub),
             new InstantCommand(() -> RobotStatus.l2())));
 
-    // Circle
-    m_driverController.circle()
+    // B
+    m_driverController.b()
         .onTrue(new ParallelCommandGroup(
             new CoralScoreL3Grp(m_armSub, m_canSub, m_drivetrainSub, m_elevatorSub, m_visionSub),
             new InstantCommand(() -> RobotStatus.l3())));
 
-    // Triangle
-    m_driverController.triangle()
+    // Y
+    m_driverController.y()
         .onTrue(new ParallelCommandGroup(
             new CoralScoreL4Grp(m_armSub, m_canSub, m_drivetrainSub, m_elevatorSub, m_visionSub),
             new InstantCommand(() -> RobotStatus.l4())));
     // L1
-    m_driverController.L1()
-        .onTrue(new ParallelCommandGroup(
-            new AlgaeRemovalL2L3Grp(m_armSub, m_canSub, m_drivetrainSub, m_elevatorSub, m_visionSub),
-            new InstantCommand(() -> RobotStatus.l2L3Algae())));
+    // m_driverController.leftBumper()
+    //     .onTrue(new ParallelCommandGroup(
+    //         new AlgaeRemovalL2L3Grp(m_armSub, m_canSub, m_drivetrainSub, m_elevatorSub, m_visionSub),
+    //         new InstantCommand(() -> RobotStatus.l2L3Algae())));
 
     // R1
-    m_driverController.R1().onTrue(new InstantCommand(() -> slowDown()))
-        .onFalse(new InstantCommand(() -> speedUp()));
+    // m_driverController.R1().onTrue(new InstantCommand(() -> slowDown()))
+    //     .onFalse(new InstantCommand(() -> speedUp()));
 
     // .onTrue(new ParallelCommandGroup(
     //     new AlgaeRemovalL3L4Grp(m_armSub, m_canSub, m_drivetrainSub, m_elevatorSub, m_visionSub),
     //     new InstantCommand(() -> RobotStatus.l3L4Algae())));
 
     // L2
-    m_driverController.L2()
+    m_driverController.leftTrigger()
         .onTrue(new ParallelCommandGroup((new InstantCommand(() -> RobotStatus.setLeft())),
             new InstantCommand(() -> m_ledSub.setElevatorColor((byte) 70, (byte) 10, (byte) 127)),
             new InstantCommand(() -> m_ledSub.setClimbColor((byte) 70, (byte) 10, (byte) 127))));
 
     // R2
-    m_driverController.R2()
+    m_driverController.rightTrigger()
         .onTrue(new ParallelCommandGroup((new InstantCommand(() -> RobotStatus.setRight())),
             new InstantCommand(() -> m_ledSub.setElevatorColor((byte) 127, (byte) 127, (byte) 0)),
             new InstantCommand(() -> m_ledSub.setClimbColor((byte) 127, (byte) 127, (byte) 0))));
@@ -242,7 +242,7 @@ public class RobotContainer {
     m_driverController.povLeft().whileTrue(new ClimbDeployCmd(m_climbSub));
 
     // Share
-    m_driverController.share().whileTrue(new BackUpToPickUpcmd(m_drivetrainSub, m_canSub));
+    //m_driverController.share().whileTrue(new BackUpToPickUpcmd(m_drivetrainSub, m_canSub));
 
     // Options
     // m_driverController.options().onTrue(new InstantCommand(() -> slowDown()))
@@ -253,15 +253,17 @@ public class RobotContainer {
     //     0.0 // Goal end velocity in meters/sec
     // ));
 
-    // PS
-    m_driverController.PS().onTrue(m_drivetrainSub.runOnce(() -> m_drivetrainSub.seedFieldCentric())); // Reset the field-centric heading
+    // Back
+    m_driverController.back().onTrue(m_drivetrainSub.runOnce(() -> m_drivetrainSub.seedFieldCentric())); // Reset the field-centric heading
 
-    // L3
+    // Left Paddle
+    m_driverController.leftStick().whileTrue(new ClimbDeployCmd(m_climbSub));
 
-    // R3
+    // Right Paddle
+    m_driverController.rightStick().whileTrue(new ClimbRetractCmd(m_climbSub));
 
-    // Touchpad
-    m_driverController.touchpad()
+    // Start
+    m_driverController.start()
         .onTrue(new KillAllCmd(m_armSub, m_canSub, m_climbSub, m_drivetrainSub, m_elevatorSub));
 
     // Combination buttons for diagnostics
@@ -279,34 +281,34 @@ public class RobotContainer {
 
     // Operator Controller Bindings /////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Square
-    m_operatorController.square().onTrue(new GrabCoralTeleopGrp(m_armSub, m_canSub, m_elevatorSub));
+    // X
+    m_operatorController.x().onTrue(new GrabCoralTeleopGrp(m_armSub, m_canSub, m_elevatorSub));
 
-    // Cross
-    m_operatorController.cross().onTrue(new ParallelCommandGroup(
+    // A
+    m_operatorController.a().onTrue(new ParallelCommandGroup(
         new MoveElArmGrp(Constants.Elevator.kL2PreScoreHeight, Constants.Arm.kL2PreScoreAngle, m_armSub, m_elevatorSub),
         new InstantCommand(() -> RobotStatus.l2())));
 
-    // Circle
-    m_operatorController.circle().onTrue(new ParallelCommandGroup(
+    // B
+    m_operatorController.b().onTrue(new ParallelCommandGroup(
         new MoveElArmGrp(Constants.Elevator.kL3PreScoreHeight,
             Constants.Arm.kL3PreScoreAngle, m_armSub, m_elevatorSub),
         new InstantCommand(() -> RobotStatus.l3())));
 
-    // Triangle
-    m_operatorController.triangle()
+    // Y
+    m_operatorController.y()
         .onTrue(new ParallelCommandGroup(new MoveElArmGrp(Constants.Elevator.kL4PreScoreHeight,
             Constants.Arm.kL4PreScoreAngle, m_armSub, m_elevatorSub),
             new InstantCommand(() -> RobotStatus.l4())));
 
     // L1
-    m_operatorController.L1()
+    m_operatorController.leftBumper()
         .onTrue(new ParallelCommandGroup(new MoveElArmGrp(Constants.Elevator.kL2L3AlgaeRemovalPrepHeight,
             Constants.Arm.kL2L3AlgaeRemovalPrepAngle, m_armSub, m_elevatorSub),
             new InstantCommand(() -> RobotStatus.l2L3Algae())));
 
     // R1
-    m_operatorController.R1()
+    m_operatorController.rightBumper()
         .whileTrue(new ParallelCommandGroup(new MoveElArmGrp(Constants.Elevator.kL3L4AlgaeRemovalPrepHeight,
             Constants.Arm.kL3L4AlgaeRemovalPrepAngle, m_armSub, m_elevatorSub),
             new InstantCommand(() -> RobotStatus.l2L3Algae())));
@@ -314,7 +316,7 @@ public class RobotContainer {
     // L2
 
     // R2
-    m_operatorController.R2().onTrue(new MoveElArmPostManualCmd(m_armSub, m_elevatorSub));
+    m_operatorController.rightTrigger().onTrue(new MoveElArmPostManualCmd(m_armSub, m_elevatorSub));
 
     // POV Up
     m_operatorController.povUp()
@@ -329,23 +331,24 @@ public class RobotContainer {
     // POV Left
 
     // Share
-    m_operatorController.share().onTrue(new InstantCommand(() -> m_armSub.setTargetAngle(-75), m_armSub));
+    m_operatorController.back().onTrue(new InstantCommand(() -> m_armSub.setTargetAngle(-75), m_armSub));
 
     // Options
-    m_operatorController.options().onTrue(new InstantCommand(() -> m_armSub.setTargetAngle(25), m_armSub));
+    m_operatorController.start().onTrue(new InstantCommand(() -> m_armSub.setTargetAngle(25), m_armSub));
 
-    // PS
-    m_operatorController.PS().onTrue(new InstantCommand(() -> m_elevatorSub.allowEncoderReset(), m_elevatorSub));
+    // Back
+    m_operatorController.back()
+        .onTrue(new InstantCommand(() -> m_elevatorSub.allowEncoderReset(), m_elevatorSub));
 
-    // Touchpad
-    m_operatorController.touchpad()
+    // Start
+    m_operatorController.start()
         .onTrue(new KillAllCmd(m_armSub, m_canSub, m_climbSub, m_drivetrainSub, m_elevatorSub));
 
     // L3
-    m_operatorController.L3().onTrue(new KillAllCmd(m_armSub, m_canSub, m_climbSub, m_drivetrainSub, m_elevatorSub));
+    //m_operatorController.L3().onTrue(new KillAllCmd(m_armSub, m_canSub, m_climbSub, m_drivetrainSub, m_elevatorSub));
 
     // R3
-    m_operatorController.R3().onTrue(new KillAllCmd(m_armSub, m_canSub, m_climbSub, m_drivetrainSub, m_elevatorSub));
+    //m_operatorController.R3().onTrue(new KillAllCmd(m_armSub, m_canSub, m_climbSub, m_drivetrainSub, m_elevatorSub));
   }
 
   /**
