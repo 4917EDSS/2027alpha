@@ -609,4 +609,12 @@ public class ElevatorSub extends TestableSubsystem {
     }
     return current;
   }
+
+  // public void setElevatorVoltage() {
+  //   m_elevatorMotor.setVoltage(1);
+  // }
+
+  // public void killElevatorVoltage() {
+  //   m_elevatorMotor.setVoltage(0);
+  // }
 }

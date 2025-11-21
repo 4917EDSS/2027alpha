@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AlgaeRemovalL2L3Grp;
@@ -317,9 +318,11 @@ public class RobotContainer {
             new InstantCommand(() -> RobotStatus.l2L3Algae())));
 
     // L2
+    // m_operatorController.L2().onTrue(new InstantCommand(() -> m_elevatorSub.setElevatorVoltage(), m_elevatorSub));
 
     // R2
     m_operatorController.R2().onTrue(new MoveElArmPostManualCmd(m_armSub, m_elevatorSub));
+    // m_operatorController.R2().onTrue(new InstantCommand(() -> m_elevatorSub.killElevatorVoltage(), m_elevatorSub));
 
     // POV Up
     m_operatorController.povUp()
