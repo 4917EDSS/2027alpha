@@ -38,6 +38,8 @@ public class ElevatorSub extends TestableSubsystem {
   private final DigitalInput m_elevatorUpperLimit = new DigitalInput(Constants.DioIds.kElevatorUpperLimit);
   private final DigitalInput m_encoderResetSwitch = new DigitalInput(Constants.DioIds.kElevatorEncoderResetSwitch);
 
+  private boolean m_runHeightControl = true;
+
   private double m_kS = 0.005;//0.01
   private double m_kG = 0.02;//0.05
   private double m_kV = 0.0;
@@ -405,53 +407,55 @@ public class ElevatorSub extends TestableSubsystem {
    *        without changing the motor power
    */
   private void runHeightControl(boolean updatePower) {
-    double activeTarget = m_targetHeight;
+    if (m_runHeightControl) {
+      double activeTarget = m_targetHeight;
 
-    if(m_currentControl.state == State.INTERRUPTED) {
-      activeTarget = m_blockedPosition;
-    }
-
-    double ffPower = m_feedforward.calculate(getVelocity());
-    //CONSTAN FORCE SPRING COMING IN
-    if(getPositionMm() >= 1100) {
-      ffPower += 0.03;
-    }
-    double pidPower = (m_elevatorPID.calculate(getPositionMm(), activeTarget));
-    double negitivepidPower = (m_negitiveelevatorPID.calculate(getPositionMm(), activeTarget));
-    double totalPower = ffPower;
-
-    if(activeTarget > getPositionMm()) {
-      totalPower += pidPower;
-    } else {
-      totalPower += negitivepidPower;
-    }
-
-    if(updatePower) {
-      if(m_isSlow) {
-        if(totalPower > 0.2) {
-          totalPower = 0.2;
-        } else if(totalPower < -0.2) {
-          totalPower = -0.2;
-        }
+      if(m_currentControl.state == State.INTERRUPTED) {
+        activeTarget = m_blockedPosition;
       }
-      setPower(totalPower);
-    }
-  }
 
-  /**
-   * Returns if the elevator has reached it's target height or not
-   * 
-   * @return true if at target height, false if not
-   */
-  public boolean isAtTargetHeight() {
-    // If we are within tolerance and our velocity is low, we're at our target
-    if((Math.abs(m_targetHeight - getPositionMm()) < Constants.Elevator.kHeightTolerance)
-        && (getVelocity() < Constants.Elevator.kAtTargetMaxVelocity)) {
-      return true;
-    } else if(m_targetHeight >= 1600 && isAtUpperLimit()) {
-      return true;
-    } else {
-      return false;
+      double ffPower = m_feedforward.calculate(getVelocity());
+      //CONSTAN FORCE SPRING COMING IN
+      if(getPositionMm() >= 1100) {
+        ffPower += 0.03;
+      }
+      double pidPower = (m_elevatorPID.calculate(getPositionMm(), activeTarget));
+      double negitivepidPower = (m_negitiveelevatorPID.calculate(getPositionMm(), activeTarget));
+      double totalPower = ffPower;
+
+      if(activeTarget > getPositionMm()) {
+        totalPower += pidPower;
+      } else {
+        totalPower += negitivepidPower;
+      }
+
+      if(updatePower) {
+        if(m_isSlow) {
+          if(totalPower > 0.2) {
+            totalPower = 0.2;
+          } else if(totalPower < -0.2) {
+            totalPower = -0.2;
+          }
+        }
+        setPower(totalPower);
+      }
+      }
+    }
+
+    /**
+     * Returns if the elevator has reached it's target height or not
+     * 
+     * @return true if at target height, false if not
+     */
+    public boolean isAtTargetHeight() {
+      // If we are within tolerance and our velocity is low, we're at our target
+      if((Math.abs(m_targetHeight - getPositionMm()) < Constants.Elevator.kHeightTolerance)
+          && (getVelocity() < Constants.Elevator.kAtTargetMaxVelocity)) {
+        return true;
+      } else if(m_targetHeight >= 1600 && isAtUpperLimit()) {
+        return true;
+      } else {
+        return false;
     }
   }
 
@@ -610,11 +614,14 @@ public class ElevatorSub extends TestableSubsystem {
     return current;
   }
 
-  // public void setElevatorVoltage() {
-  //   m_elevatorMotor.setVoltage(1);
-  // }
+  public void setElevatorVoltage() {
+    m_runHeightControl = false;
+    m_elevatorMotor.setVoltage(1);
+  }
 
-  // public void killElevatorVoltage() {
-  //   m_elevatorMotor.setVoltage(0);
-  // }
+  public void killElevatorVoltage() {
+    m_runHeightControl = true;
+    m_targetHeight = getPositionMm();
+    m_elevatorMotor.setVoltage(0);
+  }
 }

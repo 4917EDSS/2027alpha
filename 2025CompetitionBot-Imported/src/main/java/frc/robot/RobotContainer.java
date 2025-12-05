@@ -318,11 +318,11 @@ public class RobotContainer {
             new InstantCommand(() -> RobotStatus.l2L3Algae())));
 
     // L2
-    // m_operatorController.L2().onTrue(new InstantCommand(() -> m_elevatorSub.setElevatorVoltage(), m_elevatorSub));
+    m_operatorController.L2().onTrue(new InstantCommand(() -> m_elevatorSub.setElevatorVoltage(), m_elevatorSub));
 
     // R2
-    m_operatorController.R2().onTrue(new MoveElArmPostManualCmd(m_armSub, m_elevatorSub));
-    // m_operatorController.R2().onTrue(new InstantCommand(() -> m_elevatorSub.killElevatorVoltage(), m_elevatorSub));
+    // m_operatorController.R2().onTrue(new MoveElArmPostManualCmd(m_armSub, m_elevatorSub));
+    m_operatorController.R2().onTrue(new InstantCommand(() -> m_elevatorSub.killElevatorVoltage(), m_elevatorSub));
 
     // POV Up
     m_operatorController.povUp()
