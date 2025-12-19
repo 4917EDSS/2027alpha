@@ -97,49 +97,74 @@ public class PathGenCmd extends Command {
     ArrayList<int[]> toSearch = new ArrayList<int[]>();
     //creates a new arraylist to store coordinates which have already been searched
     ArrayList<int[]> processed = new ArrayList<int[]>();
+    //adds the starting pos to the toSeach arraylist
     toSearch.add(startingPos);
 
+    //runs a loop while toSearch is not empty (there are still more coordinates to travel to before reaching the finish)
     while(!toSearch.isEmpty()) {
+      //sets currentPos to the starting pos of the robot (currentPos will change as the path is generated, it is what moves during geenration)
       currentPos = toSearch.get(0);
 
+      //runs a loop for every coordinate in toSearch
       for(int[] coord : toSearch) {
+        //checks if the calcf (euclidian distacne to end point) of the next coordinate to search is less than the calcf of the current coordinate or if the calcf is the same but the calch is less
         if(calcF(coord) < calcF(currentPos)
             || Math.round((calcF(coord) * 100000)) == Math.round(calcF(currentPos) * 100000)
                 && Math.round(calcH(coord) * 100000) < Math.round(calcH(currentPos) * 100000)) {
+          //sets the currentPos to the coordinate just checkd
           currentPos = coord.clone();
         }
       }
 
+      //adds currentPos to processed
       processed.add(currentPos);
+      //runs a loop for the amount of indices in toSearch
       for(int r = 0; r < toSearch.size(); r++) {
+        //checks if the coordinate in toSeach is the same as the currentPos
         if(toSearch.get(r)[0] == currentPos[0] && toSearch.get(r)[1] == currentPos[1]) {
+          //removes the coordinate from toSearch
           toSearch.remove(r);
         }
+        //checks if to search is not empty
         if(toSearch.size() > 0) {
         }
       }
 
+      //Checks if currentPos (the varibale used as the furthest value in teh generated path) is equal to the target pos
       if((currentPos[0]) == (targetPos[0]) && (currentPos[1]) == (targetPos[1])) {
+        //creates a varibale to store the coordinate  of teh current path, and sets it to the target pos
         int[] currentPathCoord = targetPos.clone();
+        //creates an array list of int arrays to store the complete path
         ArrayList<int[]> path = new ArrayList<int[]>();
+        //sets count (used for a timeout if the path is too long)
         int count = 1000;
+        //runs a loop while teh current path coord isnt equal to teh starting pos (parses backwards through the path)
         while(!(currentPathCoord[0] == startingPos[0] && currentPathCoord[1] == startingPos[1])) {
+          //adds currentPathCoord to the path arraylist
           path.add(currentPathCoord);
+          //creates a temp coord which is equal to the current path coord (not really necessary)
           int[] tempCoord = currentPathCoord.clone();
+          //sets the temp coord equal to the neighbour of the current path coord
           tempCoord[0] = connections[currentPathCoord[0]][currentPathCoord[1]][0];
           tempCoord[1] = connections[currentPathCoord[0]][currentPathCoord[1]][1];
+          //Prints teh temp coord (for debugging)
           System.out.println(tempCoord[0] + ", " + tempCoord[1]);
+          //sets the currentpathcoord to the value of the temp coord
           currentPathCoord = tempCoord.clone();
+          //reduces count by 1
           count--;
+          //checks if count is 0
           if(count < 0) {
             //it dies but i dont want to deal with this yet
           }
         }
         //path.add(currentPathCoord);
+        //return the path
         return path;
 
       }
 
+      //
       for(int[] neighbour : getNeighbours(currentPos, processed)) {
         boolean inToSearch = toSearch.contains(neighbour);
 
