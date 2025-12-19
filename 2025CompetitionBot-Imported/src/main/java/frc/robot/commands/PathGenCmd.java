@@ -45,6 +45,8 @@ public class PathGenCmd extends Command {
 
   //generates an arraylist of neighbouring coordinates surrounding the current position (all 8 coords around it)
   public ArrayList<int[]> getNeighbours(int[] pos, ArrayList<int[]> processed) {
+    boolean failCheck1 = false;
+    boolean failCheck2 = false;
     //creates the arraylist where the neighbours will be stored
     ArrayList<int[]> neighbours = new ArrayList<int[]>();
     //iterates over numbers from -1 to 1 inclusive (for x value)
@@ -53,22 +55,32 @@ public class PathGenCmd extends Command {
       for(int j = -1; j < 2; j++) {
         //creates a temporary position variable to represent the neighbour being checked for validity (adds i and j values to x and y values, leading to 9 overall checks encompassing all the surrounding coordinates)
         int[] temp = {pos[0] + i, pos[1] + j};
-        //Checks if the neighbour being evaluated is inside the field perimeter, is a 0 value (not an occupied 1 space), and is not the robot's current coordinate (i and j are both 0)
-        if((pos[0] + i >= 0 && pos[0] + i <= field.length && pos[1] + j >= 0 && pos[1] + j <= field[0].length
-            && field[pos[0] + i][pos[1] + j] == 0 && (i != 0 || j != 0))) {
-          //sets fail to false, meaning that the niegbour has been successfully evaluated as a possible candidate for the next move 
-          boolean fail = false;
-          //iterates over the already processed coordinates
-          for(int[] f : processed) {
-            //If the coordinate has already been processed, it is not a possible move and fair is set to true
-            if(((temp[0]) == (f[0]) && (temp[1]) == (f[1]))) {
-              fail = true;
+        //iterates over the already processed coordinates
+        for(int[] f : processed) {
+          //If the coordinate has already been processed, it is not a possible move and fail is set to true
+          if(((temp[0]) == (f[0]) && (temp[1]) == (f[1]))) {
+            failCheck1 = true;
+          }
+        }
+        //iterates over numbers from -15 to 15 inclusive (for x value)
+        for(int k = -15; k < 16; k++) {
+          //iterates over numbers from -15 to 15 inclusive (for y value)
+          for(int l = -15; l < 16; l++) {
+            //Checks if the neighbour being evaluated is inside the field perimeter, is a 0 value (not an occupied 1 space), and is not the robot's current coordinate (i and j are both 0)
+            if(!(pos[0] + i + k >= 0 && pos[0] + i + k <= field.length && pos[1] + j + l >= 0 && pos[1] + j + l <= field[0].length
+                && field[pos[0] + i][pos[1] + j] == 0 && (i != 0 || j != 0))) {
+              //sets fail to ture, meaning that this neighbour is not a possible candidate
+              failCheck2 = true;
+              continue;
             }
-          //If fail is false, add it to the list fo neighbour
+            if(failCheck2){
+              continue;
+            }
           }
-          if(fail == false) {
-            neighbours.add(temp);
-          }
+        }
+        //If fail 1 and 2 are false, add it to the list of neighbours
+        if(!failCheck1 && !failCheck2) {
+          neighbours.add(temp);
         }
       }
     }
@@ -164,28 +176,37 @@ public class PathGenCmd extends Command {
 
       }
 
-      //
+      //loop through all neighbours of the current pos
       for(int[] neighbour : getNeighbours(currentPos, processed)) {
+        //sets a boolean to true if neighbour is included in tosearch
         boolean inToSearch = toSearch.contains(neighbour);
 
+        //sets the cost to get to the neighbour to the distance betwen the current pos and the neighbour (1 for vetical/horizntal, 1.41 for diagonal) + the gvals of current pos
         double costToNeighbour = gVals[currentPos[0]][currentPos[1]] + getDistance(currentPos, neighbour);
 
+        //checks if the nieghbour being checked is in tosearch or if the variable above is less than the gvals of the neigbour (in which case there would be a faster way to reach tne nighbouring pos)
         if(!inToSearch || costToNeighbour < gVals[neighbour[0]][neighbour[1]]) {
+          //sets the gvals of the neighbour to the calculated cost to reach it so far
           gVals[neighbour[0]][neighbour[1]] = costToNeighbour;
+          //adds the the current pos as a connection of the neighbour
           connections[neighbour[0]][neighbour[1]][0] = currentPos[0];
           connections[neighbour[0]][neighbour[1]][1] = currentPos[1];
 
+          //checks if in to search is false
           if(!inToSearch) {
+            //adds the neighbour to tosearch
             toSearch.add(neighbour);
           }
         }
       }
     }
+    //returns an empty array list of no other conditions are satisfied that provide a return (e.g. there are no points provided to search)
     ArrayList<int[]> nothing = new ArrayList<int[]>();
     return nothing;
   }
 
 
+  //testing
   public String printPoints(int[] targetCoords) {
     String coords = "";
     for(int[] n : generatePath(targetCoords)) {
@@ -194,6 +215,7 @@ public class PathGenCmd extends Command {
     return coords;
   }
 
+  //testing
   public int[] printNextPoint(int[] targetCoords) {
     int[] coords = new int[2];
     for(int[] n : generatePath(targetCoords)) {
@@ -204,6 +226,7 @@ public class PathGenCmd extends Command {
 
   @Override
   public void execute() {
+    //test prints
     PathFollowTargetPos.currentTarget = printNextPoint(PathFollowTargetPos.finalPos);
     System.out.println(PathFollowTargetPos.finalPos[0] + ", " + PathFollowTargetPos.finalPos[1]);
   }
