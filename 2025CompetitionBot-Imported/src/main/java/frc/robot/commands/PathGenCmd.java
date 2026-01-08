@@ -31,6 +31,30 @@ public class PathGenCmd extends Command {
   //ft over 'pixles' (length of array), used to derive field with to ensure consistancy
   int conversionFactor = fieldLength / field.length;
 
+  //used to decompress the row being searched, since it is normally compressed so the file memory isn't too large
+  public int[] decompress(String[] row){
+    //creates a new arraylist called expanded row which will hold the decompressed version of the row.
+    ArrayList<Integer> expandedRow = new ArrayList<>();
+    //an integer to express teh length of each grouping of 1 or 0
+    int lengthOfGroup;
+    //for loop to parse through all fo the groupsings of 1 and 0
+    for(int i=0; i<row.length; i++){
+      ////sets length of group to the number after the colon separator
+      lengthOfGroup = Integer.parseInt(row[i].substring(row[i].indexOf(':')+1));
+      //for loop to add a 1 and 0 to the expanded array for each 1 or zero in the grouping
+      for(int j=0; j<lengthOfGroup; j++){
+        //adds the 1 or 0 to the expanded row
+        expandedRow.add(Integer.parseInt(row[i].substring(0, row[i].indexOf(':'))));
+      }
+    }
+
+    //coverts the expanded row to an int array instead of an arraylist
+    int[] expandedRowArray = expandedRow.stream().mapToInt(null).toArray();
+    
+    //returns the expanded row
+    return expandedRowArray; 
+  }
+
   //calculates the f value of the heuristic given a coordinate (x is stored at the index 0, y is stored at the index 1 of pos)
   public double calcF(int[] pos) {
     //f is calculated by adding the g and h values
