@@ -5,6 +5,9 @@
 package frc.robot;
 
 import java.util.logging.Level;
+
+import com.ctre.phoenix6.CANBus;
+
 import edu.wpi.first.units.measure.Angle;
 import frc.robot.utils.TestMotorParameters;
 import static edu.wpi.first.units.Units.*;
@@ -31,7 +34,7 @@ public final class Constants {
 
   public static class CanBuses {
     public static final int kMainBus = 0;
-    public static final String kMainBusStr = "can_s0";
+    public static final CANBus kMainBusStr = CANBus.systemCore(kMainBus);
   }
 
   public static class CanIds {
